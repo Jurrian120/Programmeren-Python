@@ -1,37 +1,37 @@
-prijsPerKM = .80
-langeRitKM = 50
+regulierePrijsPerKM = .80
+zoneGrensAfstand = 50
 startBedragLangeRit = 15.00
-langeRitExtraEuroPerKM = .60
+langRitPrijsPerKM = .60
 
-maximaleLeeftijdKorting = 12
-minimaleLeeftijdKorting = 65
+maximaleJongerenLeeftijd = 12
+minimaleOuderenLeeftijd = 65
 
 weekdayDiscountRate = .7
 weekendDiscountRate = .65
 weekendRegularRate = .6
 
 def standaardtarief(afstandKM):
-	returnValue = 0
-	if afstandKM <= 0:
-		returnValue = returnValue
-	elif afstandKM > langeRitKM:
-		returnValue = (afstandKM * prijsPerKM) + startBedragLangeRit + (langeRitExtraEuroPerKM * afstandKM)
-	else:
-		returnValue = afstandKM * prijsPerKM
-	return returnValue
+	standaardRitPrijs= 0
 
-def ritprijs(leeftijd, weekendrit, afstandKM):
-	standaard = standaardtarief(afstandKM)
-	returnValue = 0
-	hasAgeDiscount = ((leeftijd < maximaleLeeftijdKorting) or (leeftijd >= minimaleLeeftijdKorting))
-	if not weekendrit and hasAgeDiscount:
-		returnValue = standaard * weekdayDiscountRate
-	elif weekendrit and hasAgeDiscount:
-		returnValue = standaard * weekendDiscountRate
-	elif weekendrit:
-		returnValue = standaard * weekendRegularRate
+	if afstandKM > zoneGrensAfstand:
+		standaardRitPrijs = startBedragLangeRit + (langRitPrijsPerKM * afstandKM)
 	else:
-		returnValue = standaard
+		standaardRitPrijs = afstandKM * regulierePrijsPerKM
+	return standaardRitPrijs
+
+def ritprijs(leeftijd, isEenReisInHetWeekend, afstandKM):
+	standaardRitPrijs = standaardtarief(afstandKM)
+
+	returnValue = standaardRitPrijs
+
+	hasAgeDiscount = ((leeftijd < maximaleJongerenLeeftijd) or (leeftijd >= minimaleOuderenLeeftijd))
+	if not isEenReisInHetWeekend and hasAgeDiscount:
+		returnValue = standaardRitPrijs * weekdayDiscountRate
+	elif isEenReisInHetWeekend and hasAgeDiscount:
+		returnValue = standaardRitPrijs * weekendDiscountRate
+	elif isEenReisInHetWeekend:
+		returnValue = standaardRitPrijs * weekendRegularRate
+
 	return returnValue
 
 tests = [
